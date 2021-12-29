@@ -1,0 +1,5 @@
+cat data/heroes.json | jq -r '
+("INSERT IGNORE INTO Student_G00387819.heroes (id,name,gender,race,eye_colour,hair_colour,full_name,alter_egos,place_of_birth,alignment,occupation) VALUES "),
+([ "(\(.[] | [.id,(.name|tojson),(.appearance.gender|tojson),(.appearance.race|tojson),(.appearance.eyeColor|tojson),(.appearance.hairColor|tojson),(.biography.fullName|tojson),(.biography.alter_egos|tojson),(.biography.placeOfBirth|tojson),(.biography.alignment|tojson),(.work.occupation|tojson)]  | join(",")))"] | join(",\n")),
+("ON DUPLICATE KEY UPDATE name=VALUES(name), gender=VALUES(gender), race=VALUES(race), eye_colour=VALUES(eye_colour), hair_colour=VALUES(hair_colour), full_name=VALUES(full_name), alter_egos=VALUES(alter_egos), place_of_birth=VALUES(place_of_birth), alignment=VALUES(alignment), occupation=VALUES(occupation);")
+'

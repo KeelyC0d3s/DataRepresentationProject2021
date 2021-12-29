@@ -1,74 +1,33 @@
-from flask import Flask, url_for, request, redirect, abort, jsonify
-import json
+from flask import Flask
+from flask_cors import CORS
+from flask_login import LoginManager
 
-app = Flask(__name__, static_url_path='', static_folder='pages')
+from auth import auth as auth_blueprint
+from api import api as api_blueprint
+from main import main as main_blueprint
+from model.authenticated_user import AuthenticatedUser
 
+from service import user_service
 
-access_key = 10159556057344463
+app = Flask(__name__, static_url_path='', static_folder='static')
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
+app.config['SECRET_KEY'] = 'a0058c76-d45b-4c01-8881-8efacb2e9a9a'
 
-# heroes = [
-#     {'id': 1, 'name': 'Batman'},
-#     {'id': 2, 'name': 'Superman'},
-#     {'id': 3, 'name': 'Wonder Woman'},
-# ]
-
-heroes_file = open('heroes.json')
-heroes = json.load(heroes_file)
-heroes_file.close
-
-next_id = 4
-
-@app.route('/heroes')
-def get_heroes():
-    return jsonify(heroes)
+login_manager = LoginManager()
+login_manager.login_view = 'auth.login'
+login_manager.init_app(app)
 
 
-@app.route('/heroes/<int:hero_id>')
-def get_hero_by_id(hero_id):
-    found_heroes = list(filter(lambda t: t['id'] == hero_id, heroes))
-    if len(found_heroes) == 0:
-        return jsonify({}, 404)
-    return jsonify(found_heroes[0])
+@login_manager.user_loader
+def load_user(user_id):
+    user_details = user_service.get_user_by_id(int(user_id))
+    return AuthenticatedUser(user_details)
 
 
-@app.route('/heroes', methods=['POST'])
-def create_hero():
-    global next_id
-    if not request.json:
-        abort(400)
-
-    hero = {
-        'id': next_id,
-        'name': request.json('name')
-    }
-
-    heroes.append(hero)
-
-    next_id += 1
-    return jsonify(hero)
-
-
-@app.route('/heroes/<int:hero_id>', methods=['PUT'])
-def update_hero(hero_id):
-    found_heroes = list(filter(lambda t: t['id'] == hero_id, heroes))
-    if len(found_heroes) == 0:
-        return jsonify({}, 404)
-
-    hero = found_heroes[0]
-
-    if 'name' in request.json:
-        hero['name'] = request.json('name')
-    return jsonify(hero)
-
-
-@app.route('/heroes/<int:hero_id>', methods=['DELETE'])
-def delete_hero(hero_id):
-    found_heroes = list(filter(lambda t: t['id'] == hero_id, heroes))
-    if len(found_heroes) == 0:
-        return jsonify({}, 404)
-    heroes.remove(found_heroes[0])
-    return jsonify('Done', True)
-
+app.register_blueprint(auth_blueprint)
+app.register_blueprint(api_blueprint)
+app.register_blueprint(main_blueprint)
 
 if __name__ == '__main__':
     app.run(debug=True)

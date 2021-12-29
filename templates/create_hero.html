@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="alert alert-danger">
+                {{ messages[0] }}
+            </div>
+        {% endif %}
+    {% endwith %}
+    <script src="{{url_for('static', filename='heroes.js')}}"></script>
+    <form onsubmit="createHero(); return false;">
+        <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+        </div>
+        <fieldset class="form-group">
+            <legend>Appearance</legend>
+            <div class="mb-3">
+                <label for="gender" class="form-label">Gender</label>
+                <input type="text" class="form-control" id="gender" name="gender" required>
+            </div>
+            <div class="mb-3">
+                <label for="race" class="form-label">Race</label>
+                <input type="text" class="form-control" id="race" name="race" required>
+            </div>
+            <div class="mb-3">
+                <label for="eye_colour" class="form-label">Eye Colour</label>
+                <input type="text" class="form-control" id="eye_colour" name="eye_colour">
+            </div>
+            <div class="mb-3">
+                <label for="hair_colour" class="form-label">Hair Colour</label>
+                <input type="text" class="form-control" id="hair_colour" name="hair_colour">
+            </div>
+            <div class="mb-3">
+                <label for="occupation" class="form-label">Occupation</label>
+                <input type="text" class="form-control" id="occupation" name="occupation">
+            </div>
+        </fieldset>
+        <fieldset class="form-group">
+            <legend>Biography</legend>
+            <div class="mb-3">
+                <label for="full_name" class="form-label">Full Name</label>
+                <input type="text" class="form-control" id="full_name" name="full_name" required>
+            </div>
+            <div class="mb-3">
+                <label for="place_of_birth" class="form-label">Place Of Birth</label>
+                <input type="text" class="form-control" id="place_of_birth" name="place_of_birth" required>
+            </div>
+            <div class="mb-3">
+                <label for="alignment" class="form-label">Alignment</label>
+                <input type="text" class="form-control" id="alignment" name="alignment" required>
+            </div>
+        </fieldset>
+        <fieldset class="form-group">
+            <button type="button" onclick="window.location.href='/heroes'" class="btn btn-secondary">Cancel</button>
+            <button type="submit" class="btn btn-primary">Create</button>
+        </fieldset>
+    </form>
+{% endblock %}

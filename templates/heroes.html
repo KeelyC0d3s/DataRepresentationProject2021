@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <script src="{{url_for('static', filename='heroes.js')}}"></script>
+
+    <div class="text-right">
+        <button class="btn btn-primary" onclick="window.location.href='/heroes/create'">Add Hero</button>
+    </div>
+
+    <table id="heroesTable" class="table">
+        <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Gender</th>
+            <th scope="col">Race</th>
+            <th scope="col">Alignment</th>
+            <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for hero in heroes %}
+            <tr>
+                <td>{{ hero.name }}</td>
+                <td>{{ hero.appearance.gender }}</td>
+                <td>{{ hero.appearance.race }}</td>
+                <td>{{ hero.biography.alignment }}</td>
+                <td>
+                    <a href="/heroes/{{ hero.id }}/edit">edit</a>
+                    <a href="#" onclick="deleteHero({{ hero.id }}); return false;">delete</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
